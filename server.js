@@ -127,8 +127,12 @@ app.post("/articles/:id", function(req, res) {
     .then(function(dbArticle){
       res.json(dbArticle)
     })
-
-    }
+    .catch(function(err) {
+      // If an error occurred, send it to the client
+      res.json(err);
+    })
+    })
+  });
 
     
   // and update it's "note" property with the _id of the new note
@@ -136,4 +140,4 @@ app.post("/articles/:id", function(req, res) {
 // Start the server
 app.listen(PORT, function() {
   console.log("App is listening on port " + PORT + "!");
-});
+};

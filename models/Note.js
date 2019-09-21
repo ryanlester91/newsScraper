@@ -11,11 +11,11 @@ let noteSchema = new Schema({
 		type: Schema.Types.ObjectId,
 		ref: "Article"
 	}
-	let Note = mongoose.model("Note", NoteSchema);
+	
 
 
 });
-
+let Note = mongoose.model("Note", noteSchema);
 
 
 //Export our Note model
