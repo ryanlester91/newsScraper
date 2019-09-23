@@ -2,22 +2,30 @@
   <div id="wrapper">
       <h1>The Daily Scrape</h1>
       <h3><i>We provide the news for you but we can't decide for you what to believe</i></h3>
- <div class="container-fluid article-container">
+ <section>
+      <div class="container-fluid article-container">
      <div class="card">
          <div class="card-header">
              <div class="card-body">
-                  <div id="articles"></div>
+                  <div id="articles">
+                      {{#each article}}
+                  </div>
 
              </div>
          </div>
      </div>
- </div>  
+ </div> 
+ </section> 
 
+<section id="comments">
  <div class="container">
      <div class="card">
-         <div id="notes"></div>
+         <div id="notes">
+             {{#each note}}
+         </div>
      </div>
  </div> 
+ </section>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="app.js"></script>
