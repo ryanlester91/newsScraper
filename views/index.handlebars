@@ -2,18 +2,25 @@
   <div id="wrapper">
       <h1>The Daily Scrape</h1>
       <h3><i>We provide the news for you but we can't decide for you what to believe</i></h3>
- <section>
+ <section id="articles">
+      
       <div class="container-fluid article-container">
-     <div class="card">
-         <div class="card-header">
-             <div class="card-body">
-                  <div id="articles">
-                      {{#each article}}
-                  </div>
+        {{#if article}}
+        {{#each article}}
+        <div class="card">
+            <div class="card-header">
+                {{this.title}}
+                <div class="card-body">
+                   
+                        {{this.link}}
+                     
+                  
 
              </div>
          </div>
      </div>
+     {{/each}}
+     {{/if}}
  </div> 
  </section> 
 
@@ -21,10 +28,13 @@
  <div class="container">
      <div class="card">
          <div id="notes">
+             {{#if note}}
              {{#each note}}
          </div>
      </div>
  </div> 
+ {{/each}}
+ {{/if}}
  </section>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>

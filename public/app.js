@@ -1,3 +1,5 @@
+
+
 // Grab the articles as a json
 $.getJSON("/articles", function(data) {
     // For each one
@@ -33,3 +35,5 @@ $.getJSON("/articles", function(data) {
         $("#notes").append("<button data-id='" + data._id + "' id='savenote'>Save Note</button>");
       })
     })
+
+    
