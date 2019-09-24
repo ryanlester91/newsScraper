@@ -139,6 +139,34 @@ app.get("/articles", function(req, res) {
     });*/
 });
 
+// Create a new note or replace an existing note
+app.post("/articles/:id", function(req, res) {
+
+  // Create a new note and pass the req.body to the entry
+  var newNote = new Note(req.body);
+  // And save the new note the db
+  newNote.save(function(error, doc) {
+    // Log any errors
+    if (error) {
+      console.log(error);
+    } 
+    else {
+      // Use the article id to find it and then push note
+      Article.findOneAndUpdate({ "_id": req.params.id }, {$push: {notes: doc._id}}, {new: true})
+
+      .populate('notes')
+
+      .exec(function (err, doc) {
+        if (err) {
+          console.log("Cannot find article.");
+        } else {
+          console.log("On note save we are getting notes? " + doc.notes);
+          res.send(doc);
+        }
+      });
+    }
+  });
+});
 
 
 // Start the server
