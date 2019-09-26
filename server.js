@@ -59,7 +59,7 @@ console.log("\n***********************************\n" +
       
  // Render main page
  app.get("/", (req, res)=>{
-            res.render('index');
+            res.render('index', {});
       });
 
 // saving those scraped articles
@@ -79,7 +79,7 @@ app.get('/saved', (req, res)=>{
 // A GET route for scraping
 app.get("/scrape", function(req, res) {
   // First, we grab the body of the html with axios
-  axios.get("http://washingtontimes.com").then(function(response) {
+  axios.get("https://washingtontimes.com").then(function(response) {
     // Then, we load that into cheerio and save it to $ for a shorthand selector
     var $ = cheerio.load(response.data);
     // Now, we grab every h2 within an article tag, and do the following:
@@ -95,11 +95,11 @@ app.get("/scrape", function(req, res) {
         .children("a")
         .attr("href");
         result.summary = $(this)
-        .children("a");
+        .children("p")
+        .children("a")
+        .text();
 
         
-  
-
   // Send a message to the client
   res.send("Scrape Complete");
 });
@@ -111,9 +111,9 @@ app.get("/scrape", function(req, res) {
 app.get("/articles", function(req, res) {
   // Grab every document in the Articles collection
   Article.find({})
-    .then(function(dbArticle) {
+    .then(function() {
       // If we were able to successfully find Articles, send them back to the client
-      res.json(dbArticle);
+      res.json();
     })
     .catch(function(err) {
       // If an error occurred, send it to the client
@@ -121,51 +121,38 @@ app.get("/articles", function(req, res) {
     });
 });
 
-//app.get("/")
 
 // Route for grabbing a specific Article by id, populate it with it's note
-/*app.get("/articles/:id", function(req, res) {
+app.get("/articles/:id", function(req, res) {
   // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
   Article.findOne({ _id: req.params.id })
     // ..and populate all of the notes associated with it
-    .populate("note")
-    .then(function(dbArticle) {
+    .populate("notes")
+    .then(function(data) {
       // If we were able to successfully find an Article with the given id, send it back to the client
-      res.json(dbArticle);
+      res.json(data);
     })
     .catch(function(err) {
       // If an error occurred, send it to the client
       res.json(err);
-    });*/
+    });
 });
 
 // Create a new note or replace an existing note
 app.post("/articles/:id", function(req, res) {
 
   // Create a new note and pass the req.body to the entry
-  var newNote = new Note(req.body);
+  //var newNote = new Note(req.body);
   // And save the new note the db
-  newNote.save(function(error, doc) {
-    // Log any errors
-    if (error) {
-      console.log(error);
-    } 
-    else {
+  Note.create(req.body)  //Should create a note and pass it in req.body
+    
+      .then(function(data) {
       // Use the article id to find it and then push note
-      Article.findOneAndUpdate({ "_id": req.params.id }, {$push: {notes: doc._id}}, {new: true})
-
-      .populate('notes')
-
-      .exec(function (err, doc) {
-        if (err) {
-          console.log("Cannot find article.");
-        } else {
-          console.log("On note save we are getting notes? " + doc.notes);
-          res.send(doc);
-        }
-      });
-    }
-  });
+      return Note.findOneAndUpdate({ _id: req.params.id }, {$push: {note: data._id}}, {new: true});
+      //.populate("notes")
+        })
+        .then(function(data){ res.json(data);})
+        .catch(function(err){ res.json(err)});
 });
 
 
@@ -173,3 +160,6 @@ app.post("/articles/:id", function(req, res) {
 app.listen(PORT, function() {
   console.log("App is listening on port " + PORT + "!");
 });
+
+
+module.exports = app;
