@@ -36,13 +36,13 @@ app.set("view engine", "handlebars");
 //Ask about the after backslash part
 mongoose.connect("mongodb://localhost/news-scraper", { useNewUrlParser: true });
 
-let db = mongoose.connection;
+let connect = mongoose.connection;
 
-db.on("error", function(error){
+connect.on("error", function(error){
 	console.log("Mongoose Error: ", error);
 });
 
-db.once("open", function(){
+connect.once("open", function(){
 	console.log("Mongoose connection successful.");
 });
 
@@ -59,22 +59,10 @@ console.log("\n***********************************\n" +
       
  // Render main page
  app.get("/", (req, res)=>{
-            res.render('index', {});
+            res.render('index');
       });
 
-// saving those scraped articles
-app.get('/saved', (req, res)=>{
-  Article.find({saved: true})
-  .then((dbArticle)=>{
-      let articleObj = {article: dbArticle};
 
-      // render page with articles found
-      res.render('saved', articleObj);
-  })
-  .catch((err)=>{
-      res.json(err);
-  });
-});
 
 // A GET route for scraping
 app.get("/scrape", function(req, res) {
@@ -105,6 +93,19 @@ app.get("/scrape", function(req, res) {
 });
 });
 
+// saving those scraped articles
+app.get('/saved', (req, res)=>{
+  Article.find({saved: true})
+  .then((article)=>{
+      let articleObj = {article: article};
+
+      // render page with articles found
+      res.render('saved', articleObj);
+  })
+  .catch((err)=>{
+      res.json(err);
+  });
+});
 
 
 // Route for getting all Articles from the db
@@ -153,6 +154,7 @@ app.post("/articles/:id", function(req, res) {
         })
         .then(function(data){ res.json(data);})
         .catch(function(err){ res.json(err)});
+});
 });
 
 
